@@ -14,18 +14,29 @@ const strToColor = str => {
   return color;
 };
 
-let model = {}
+let model = {
+  isLoading: false,
+  isLoaded: false,
+}
 
-export const initPipeline = async () => {
-  console.log('loading model..')
+const loadModel = async () => {
+  model.isLoading = true
+  console.log('drawPredictions.js: loading model..')
+  
   const modelPromise = cocoSsd.load();
   modelPromise.then(_model => {
     model = _model
-    console.log('model loaded')
+    model.isLoaded = true
+    console.log('drawPredictions.js: model loaded')
   })
+}
 
+export const initPipeline = async () => {
   const createPayload = async image => {
-    if (!model.detect) {
+    if (!model.isLoaded) {
+      if (!model.isLoading) {
+        loadModel()
+      }
       return {
         isModelLoaded: false,
         predictions: [],
@@ -49,7 +60,7 @@ export const handler = (canvas, image, {predictions, isModelLoaded}) => {
   ctx.textBaseline = "top";
 
   if (!isModelLoaded) {
-    drawText(ctx, "loading model..")
+    drawText(ctx, "loading model.. (~32MB)")
     return
   }
 
