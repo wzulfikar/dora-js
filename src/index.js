@@ -9,6 +9,7 @@ import pipelineProvider from "./pipelineProvider";
 
 // add your pipelines here
 const pipelineHandlers = {
+  drawRectangle: require('./pipelines/drawRectangle'),
   drawEdges: require('./pipelines/drawEdges'),
   drawCorners: require('./pipelines/drawCorners'),
   drawPredictions: require('./pipelines/drawPredictions'),
@@ -30,7 +31,7 @@ const App = () => {
     }
 
     const webcamPromise = webcamStreamer(videoRef.current)
-    const processFramePromise = pipelineProvider(pipelineHandlers)
+    const processFramePromise = pipelineProvider(canvasRef.current, pipelineHandlers)
 
     Promise.all([
       webcamPromise,

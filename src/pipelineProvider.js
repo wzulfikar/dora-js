@@ -1,8 +1,8 @@
 import stats from './stats.js'
 
-const pipelineProvider = async pipelineHandlers => {
+const pipelineProvider = async (canvas, pipelineHandlers) => {
     await Promise.all(Object.keys(pipelineHandlers).map(async pipelineName => {
-        const createPayload = await pipelineHandlers[pipelineName].initPipeline()
+        const createPayload = await pipelineHandlers[pipelineName].initPipeline(canvas)
         pipelineHandlers[pipelineName].createPayload = createPayload
     }))
 
