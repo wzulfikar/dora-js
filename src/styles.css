@@ -5,3 +5,10 @@
   border: 1px solid black;
   margin: 10px;
 }
+
+.canvas-info {
+  position: fixed;
+  top: 12px;
+  left: 15px;
+  z-index: 1;
+}

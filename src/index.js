@@ -4,7 +4,7 @@ import ReactDOM from "react-dom";
 import "./styles.css";
 
 // load lib codes
-import { initDatGui } from './lib/datGui'
+import { initDatGui, types, getCanvasSize } from './lib/datGui'
 import webcamStreamer from "./lib/webcamStreamer";
 import pipelineProvider from "./lib/pipelineProvider";
 
@@ -16,8 +16,6 @@ const pipelineHandlers = {
   drawPredictions: require('./pipelines/drawPredictions'),
 }
 
-initDatGui(pipelineHandlers)
-
 const App = () => {
   const videoRef = React.createRef();
   const canvasRef = React.createRef();
@@ -25,11 +23,25 @@ const App = () => {
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState();
 
+  const [datgui$, datguiConfig] = initDatGui(pipelineHandlers)
+  const [canvasW, canvasH] = datguiConfig['Canvas size'].split('x')
+  const [canvasSize, setCanvasSize] = useState({w: canvasW, h: canvasH})
+
   useEffect(() => {
     if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
       alert("error: could not get user media");
       return;
     }
+
+    datgui$.subscribe({
+      next: ({type, payload}) => {
+        if (type === types.CANVAS_SIZE) {
+          const [w, h] = payload
+          setCanvasSize({w, h})
+          return
+        }
+      }
+    })
 
     const webcamPromise = webcamStreamer(videoRef.current)
     const processFramePromise = pipelineProvider(canvasRef.current, pipelineHandlers)
@@ -48,22 +60,22 @@ const App = () => {
     .finally(() => {
       setIsLoading(false);
     });
-  });
+  }, canvasSize);
 
   return (
     <div>
-      {isLoading && <span>waiting for webcam..</span>}
-      {error && <span style={{ color: "red" }}>ERROR: {error.message}</span>}
+      {isLoading && !error && <span className="canvas-info">waiting for webcam..</span>}
+      {error && <span className="canvas-info" style={{ color: "red" }}>error: asdfom error</span>}
       <video
         className="size"
         autoPlay
         playsInline
         muted
         ref={videoRef}
-        width="600"
-        height="500"
+        width={canvasSize.w}
+        height={canvasSize.h}
       />
-      <canvas className="size" ref={canvasRef} width="600" height="500" />
+      <canvas className="size" ref={canvasRef} width={canvasSize.w} height={canvasSize.h} />
     </div>
   );
 };

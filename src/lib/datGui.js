@@ -1,11 +1,14 @@
 import * as dat from 'dat.gui';
+import {Subject} from 'rxjs'
 
 const gui = new dat.GUI();
 const defaultParams = {}
 let foldersAdded = {}
+let datgui$ = null
 
 const togglePipelineFolderName = 'Toggle pipeline'
 const pipelineControlsNs = 'datgui_main_pipelineControls'
+const mainConfigNs = 'datgui_main_config'
 window[pipelineControlsNs] = {}
 
 const getPipelineNs = pipelineName => `datgui_pipeline_${pipelineName}`
@@ -51,14 +54,26 @@ const resetStates = function () {
     // propagate gui updates
     for (let folder in foldersAdded) {
         for (let i in foldersAdded[folder].__controllers) {
-            // const propName = foldersAdded[folder].__controllers[i].property
-            // const defaultPropVal = defaultParams[folder][propName]
             foldersAdded[folder].__controllers[i].updateDisplay()
         }
     }
 }
 
-export const initDatGui = (pipelineHandlers) => {
+export const DEFAULT_CANVAS_SIZE = '600x400'
+
+export const types = {
+    CANVAS_SIZE: 'CANVAS_SIZE'
+}
+
+export const getCanvasSize = () => window[mainConfigNs]['Canvas size'].split('x')
+
+export const initDatGui = (pipelineHandlers) => {    
+    if (datgui$) {
+        return [datgui$, window[mainConfigNs]]
+    }
+
+    datgui$ = new Subject()
+
     // load pipeline control from storage
     const pipelineControlSnapshot = JSON.parse(localStorage.getItem(pipelineControlsNs))
     Object.keys(pipelineHandlers).forEach((pipeline, i) => {
@@ -71,12 +86,23 @@ export const initDatGui = (pipelineHandlers) => {
         window[pipelineControlsNs][pipeline] = i === 0
     })
 
-    const config = {
-        'Reset states': () => resetStates()
+    // initialie config
+    let config = JSON.parse(localStorage.getItem(mainConfigNs)) || {
+        'Canvas size': DEFAULT_CANVAS_SIZE,
     }
-    const configFolder = gui.addFolder('Config')
-    configFolder.add(config, 'Reset states')
+    window[mainConfigNs] = config
 
+    // add function config
+    config['Reset states'] = () => resetStates()
+
+    const configFolder = gui.addFolder('Config')
+    configFolder.add(config, 'Canvas size', [ '600x400', '600x500', '500x500' ])
+        .listen()
+        .onFinishChange(v => {
+            datgui$.next({type: types.CANVAS_SIZE, payload: v.split('x')})
+        })
+    configFolder.add(config, 'Reset states')
+    
     const togglePipelineFolder = gui.addFolder(togglePipelineFolderName)
     foldersAdded[togglePipelineFolderName] = togglePipelineFolder
 
@@ -95,6 +121,8 @@ export const initDatGui = (pipelineHandlers) => {
     // persist datgui states in local storage
     window.onblur = persistStates
     window.onbeforeunload = persistStates
+
+    return [datgui$, window[mainConfigNs]]
 }
 
 export const useGuiFolder = (folderName, params) => {
