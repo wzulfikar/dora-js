@@ -1,3 +1,5 @@
+// forked from https://codesandbox.io/s/kwmq4v263
+
 import * as cocoSsd from "@tensorflow-models/coco-ssd";
 import "@tensorflow/tfjs";
 

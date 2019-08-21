@@ -68,7 +68,7 @@ export const initDatGui = (pipelineHandlers) => {
         }
 
         // only activate first pipeline
-        window[pipelineControlsNs][i] = i === 0
+        window[pipelineControlsNs][pipeline] = i === 0
     })
 
     const config = {
