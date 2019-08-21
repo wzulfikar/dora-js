@@ -50,7 +50,7 @@ const App = () => {
 
   return (
     <div>
-      {isLoading && <span>waiting for webcam and pipelines..</span>}
+      {isLoading && <span>waiting for webcam..</span>}
       {error && <span style={{ color: "red" }}>ERROR: {error.message}</span>}
       <video
         className="size"
