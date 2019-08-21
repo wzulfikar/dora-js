@@ -17,11 +17,14 @@ statsAll.forEach((stats, i) => {
 })
 
 // adjust datgui placement
-window.addEventListener('load', () => {
-    const datGuiPanel = document.querySelector('.dg.ac')
-    datGuiPanel.style.top = '50px'
-    datGuiPanel.style.right = '-10px'
-})
+const style = document.createElement('style')
+style.innerHTML = `
+    .dg.ac {
+        top: 50px;
+        right: -10px;
+    }
+`
+document.body.appendChild(style)
 
 const updateStats = () => {
     statsAll.forEach(stats => {
