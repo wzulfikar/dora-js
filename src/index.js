@@ -1,11 +1,12 @@
 import React, { useEffect, useState } from "react";
 import ReactDOM from "react-dom";
 
-import { initDatGui } from './datGui'
-
 import "./styles.css";
-import webcamStreamer from "./webcamStreamer";
-import pipelineProvider from "./pipelineProvider";
+
+// load lib codes
+import { initDatGui } from './lib/datGui'
+import webcamStreamer from "./lib/webcamStreamer";
+import pipelineProvider from "./lib/pipelineProvider";
 
 // add your pipelines here
 const pipelineHandlers = {

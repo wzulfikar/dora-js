@@ -1,8 +1,7 @@
 import 'tracking'
-import { useGui } from '../datGui'
+import { useGuiFolder, useGuiObj } from '../lib/datGui'
 
 const pipelineName = 'drawRectangle'
-const datGuiNamespace = `datGuiPipeline_${pipelineName}`
 
 let guiInitialized = false
 export const initPipeline = async (canvas) => {
@@ -10,9 +9,7 @@ export const initPipeline = async (canvas) => {
     return
   }
 
-  const gui = useGui()
-  const folder = gui.addFolder('Pipeline: drawRectangle')
-  window[datGuiNamespace] = {
+  const {folder, guiObj} = useGuiFolder(pipelineName, {
     'Stroke': '#000000',
     'Fill': '#000000',
     'x': 10,
@@ -22,17 +19,17 @@ export const initPipeline = async (canvas) => {
     'Line width': 4,
     'Set center': false,
     'Set fill': false,
-  }
+  })
 
-  folder.add(window[datGuiNamespace], 'x', 0, canvas.width);
-  folder.add(window[datGuiNamespace], 'y', 0, canvas.height);
-  folder.add(window[datGuiNamespace], 'Width', 0, canvas.width);
-  folder.add(window[datGuiNamespace], 'Height', 0, canvas.height);
-  folder.add(window[datGuiNamespace], 'Line width', 0, 10);
-  folder.addColor(window[datGuiNamespace], 'Stroke');
-  folder.addColor(window[datGuiNamespace], 'Fill');
-  folder.add(window[datGuiNamespace], 'Set center');
-  folder.add(window[datGuiNamespace], 'Set fill');
+  folder.add(guiObj, 'x', 0, canvas.width);
+  folder.add(guiObj, 'y', 0, canvas.height);
+  folder.add(guiObj, 'Width', 0, canvas.width);
+  folder.add(guiObj, 'Height', 0, canvas.height);
+  folder.add(guiObj, 'Line width', 0, 10);
+  folder.addColor(guiObj, 'Stroke');
+  folder.addColor(guiObj, 'Fill');
+  folder.add(guiObj, 'Set center');
+  folder.add(guiObj, 'Set fill');
 
   folder.open()
 
@@ -43,25 +40,26 @@ export const handler = (canvas, image) => {
     const ctx = canvas.getContext('2d')
     ctx.clearRect(0, 0, ctx.canvas.width, ctx.canvas.height);
 
+    const guiObj = useGuiObj(pipelineName)
     let {
       Stroke,
       x,
       y,
       Width,
       Height
-    } = window[datGuiNamespace]
+    } = guiObj
 
-    ctx.lineWidth = window[datGuiNamespace]['Line width'];
+    ctx.lineWidth = guiObj['Line width'];
     ctx.strokeStyle = Stroke;
 
-    if (window[datGuiNamespace]['Set center']) {
+    if (guiObj['Set center']) {
       const centerPoint = getCenterPoint(canvas, Width, Height)
       x = centerPoint.x
       y = centerPoint.y
     }
 
-    if (window[datGuiNamespace]['Set fill']) {
-      ctx.fillStyle = window[datGuiNamespace]['Fill'];
+    if (guiObj['Set fill']) {
+      ctx.fillStyle = guiObj['Fill'];
       ctx.fillRect(x, y, Width, Height);
     }
 

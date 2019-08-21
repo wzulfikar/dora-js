@@ -7,7 +7,6 @@ const webcamStreamer = image =>
       }
     })
     .then(stream => {
-      window.stream = stream;
       image.srcObject = stream;
       return new Promise((resolve, reject) => {
         image.onloadedmetadata = () => {

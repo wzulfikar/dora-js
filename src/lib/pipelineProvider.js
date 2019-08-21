@@ -1,6 +1,9 @@
 import stats from './stats.js'
+import {usePipelineControls} from './datGui'
 
 const pipelineProvider = async (canvas, pipelineHandlers) => {
+    const pipelineControls = usePipelineControls()
+
     await Promise.all(Object.keys(pipelineHandlers).map(async pipelineName => {
         const createPayload = await pipelineHandlers[pipelineName].initPipeline(canvas)
         pipelineHandlers[pipelineName].createPayload = createPayload
@@ -8,8 +11,8 @@ const pipelineProvider = async (canvas, pipelineHandlers) => {
 
     const processFrame = async (canvas, image) => {
         let pipelineHasRun = false
-        Object.keys(window.pipelineControls).map(async pipelineName => {
-            if (!window.pipelineControls[pipelineName]) {
+        Object.keys(pipelineControls).map(async pipelineName => {
+            if (!pipelineControls[pipelineName]) {
                 return
             }
             pipelineHasRun = true

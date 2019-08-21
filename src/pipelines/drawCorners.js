@@ -1,10 +1,12 @@
 import 'tracking'
-import { useGui } from '../datGui'
+import { useGuiFolder, useGuiObj } from '../lib/datGui'
 
 const {
     Image,
     Fast,
 } = window.tracking
+
+const pipelineName = 'drawCorners'
 
 let guiInitialized = false
 export const initPipeline = async () => {
@@ -12,17 +14,18 @@ export const initPipeline = async () => {
     return
   }
 
-  const gui = useGui()
-  const folder = gui.addFolder('Pipeline: drawCorners')
-
-  window['Fast Threshold'] = 10
-  folder.add(window, 'Fast Threshold', 0, 100);
+  const {folder, guiObj} = useGuiFolder(pipelineName, {
+    'Fast Threshold': 10,
+  })
+  folder.add(guiObj, 'Fast Threshold', 0, 100);
   folder.open()
+
   guiInitialized = true
 }
 
 export const handler = (canvas, image) => {
-    window.tracking.Fast.THRESHOLD = window['Fast Threshold']
+    const guiObj = useGuiObj(pipelineName)
+    window.tracking.Fast.THRESHOLD = guiObj['Fast Threshold']
 
     const ctx = canvas.getContext('2d')
     ctx.drawImage(image, 0, 0, canvas.width, canvas.height);
