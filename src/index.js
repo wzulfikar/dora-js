@@ -4,7 +4,7 @@ import ReactDOM from "react-dom";
 import "./styles.css";
 
 // load lib codes
-import { initDatGui, types, getCanvasSize } from './lib/datGui'
+import { initDatGui, types } from './lib/datGui'
 import webcamStreamer from "./lib/webcamStreamer";
 import pipelineProvider from "./lib/pipelineProvider";
 
@@ -60,7 +60,7 @@ const App = () => {
     .finally(() => {
       setIsLoading(false);
     });
-  }, canvasSize);
+  }, [canvasSize]);
 
   return (
     <div>

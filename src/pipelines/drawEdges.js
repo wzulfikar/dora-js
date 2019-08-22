@@ -22,12 +22,13 @@ export const handler = (canvas, image, edgeColor = 0xFF9E24FF) => {
   }
 
   const imageData = ctx.getImageData(0, 0, ctx.canvas.width, ctx.canvas.height);
-    const edges = detect(
-      imageData.data,
-      ctx.canvas.width,
-      ctx.canvas.height,
-      edgeColor,
-      true
-    );
+  const edges = detect(
+    imageData.data,
+    ctx.canvas.width,
+    ctx.canvas.height,
+    edgeColor,
+    true
+  );
+
   ctx.putImageData(new ImageData(edges, ctx.canvas.width, ctx.canvas.height), 0, 0);
 }
