@@ -65,7 +65,7 @@ const App = () => {
   return (
     <div>
       {isLoading && !error && <span className="canvas-info">waiting for webcam..</span>}
-      {error && <span className="canvas-info" style={{ color: "red" }}>error: asdfom error</span>}
+      {error && <span className="canvas-info" style={{ color: "red" }}>error: {error.message}</span>}
       <video
         className="size"
         autoPlay
