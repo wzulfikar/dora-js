@@ -29,6 +29,7 @@ const persistStates = function () {
     namespaces.forEach(namespace => {
         localStorage.setItem(namespace, JSON.stringify(window[namespace]))
     })
+    console.log('datgui states persisted')
 }
 
 const resetStates = function () {
@@ -148,7 +149,7 @@ export const useGuiFolder = (folderName, params) => {
 
     // load gui states
     const persistedStates = JSON.parse(localStorage.getItem(pipelineNs)) || {}
-    const guiObj = Object.assign(persistedStates, params)
+    const guiObj = Object.assign(params, persistedStates)
     window[pipelineNs] = guiObj
 
     return {folder, guiObj, isActive: window[pipelineControlsNs][folderName] === true}
