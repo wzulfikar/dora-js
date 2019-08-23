@@ -9,7 +9,7 @@ export const initPipeline = async (canvas) => {
     return
   }
 
-  const {folder, guiObj} = useGuiFolder(pipelineName, {
+  const {folder, guiObj, isActive} = useGuiFolder(pipelineName, {
     'Stroke': '#000000',
     'Fill': '#000000',
     'x': 10,
@@ -31,7 +31,9 @@ export const initPipeline = async (canvas) => {
   folder.add(guiObj, 'Set center');
   folder.add(guiObj, 'Set fill');
 
-  folder.open()
+  if (isActive) {
+    folder.open()
+  }
 
   guiInitialized = true
 }

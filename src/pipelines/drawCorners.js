@@ -1,6 +1,6 @@
 import 'tracking'
 import { useGuiFolder, useGuiObj } from '../lib/datGui'
-import { 
+import {
   getCenterPoint,
   getRectRegion,
   drawSquareMask,
@@ -20,7 +20,7 @@ export const initPipeline = async () => {
     return
   }
 
-  const {folder, guiObj} = useGuiFolder(pipelineName, {
+  const {folder, guiObj, isActive} = useGuiFolder(pipelineName, {
     'Fast Threshold': 10,
     'Show region': false,
     'Region style': 'bracket',
@@ -30,7 +30,10 @@ export const initPipeline = async () => {
   folder.add(guiObj, 'Show region');
   folder.add(guiObj, 'Region style', ['bracket', 'full']);
   folder.addColor(guiObj, 'Region color');
-  folder.open()
+
+  if (isActive) {
+    folder.open()
+  }
 
   guiInitialized = true
 }
@@ -64,13 +67,13 @@ export const handler = (canvas, image) => {
     let regionCorners = 0
     for (let i = 0; i < corners.length; i += 2) {
       let [cornerX, cornerY] = [corners[i], corners[i + 1]]
-      
+
       // shift corners positions
       if (guiObj['Show region']) {
         cornerX += region[0].x
         cornerY += region[0].y
       }
-      
+
       ctx.fillRect(cornerX, cornerY, CORNER_WIDTH, CORNER_WIDTH);
       regionCorners++
     }

@@ -1,9 +1,6 @@
 import stats from './stats.js'
-import {usePipelineControls} from './datGui'
 
-const pipelineProvider = async (canvas, pipelineHandlers) => {
-    const pipelineControls = usePipelineControls()
-
+const pipelineProvider = async (canvas, pipelineHandlers, pipelineControls) => {
     await Promise.all(Object.keys(pipelineHandlers).map(async pipelineName => {
         const createPayload = await pipelineHandlers[pipelineName].initPipeline(canvas)
         pipelineHandlers[pipelineName].createPayload = createPayload

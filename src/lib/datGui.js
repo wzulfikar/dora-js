@@ -42,20 +42,32 @@ const resetStates = function () {
 
     // first item in pipeline control is active by default
     Object.keys(window[pipelineControlsNs]).forEach((pipelineName, i) => {
-        if (i === 0 && foldersAdded[pipelineName]) {
-            foldersAdded[pipelineName].open()
-        }
         window[pipelineControlsNs][pipelineName] = i === 0
+        if (foldersAdded[pipelineName]) {
+            const shouldOpenFolder = window[pipelineControlsNs][pipelineName]
+            if (shouldOpenFolder) {
+                foldersAdded[pipelineName].open()
+            } else {
+                foldersAdded[pipelineName].close()
+            }
+        }
     })
-
-    // open toggle pipeline folder
-    foldersAdded[togglePipelineFolderName].open()
 
     // propagate gui updates
     for (let folder in foldersAdded) {
         for (let i in foldersAdded[folder].__controllers) {
             foldersAdded[folder].__controllers[i].updateDisplay()
         }
+    }
+}
+
+const datguiConfig = (datgui$, mainConfigObj, pipelineControls) => {
+    return  {
+        $observable: datgui$,
+        config: {
+            ...mainConfigObj
+        },
+        pipelineControls
     }
 }
 
@@ -67,23 +79,23 @@ export const types = {
 
 export const getCanvasSize = () => window[mainConfigNs]['Canvas size'].split('x')
 
-export const initDatGui = (pipelineHandlers) => {    
+export const initDatGui = (pipelineHandlers) => {
     if (datgui$) {
-        return [datgui$, window[mainConfigNs]]
+        return datguiConfig(datgui$, window[mainConfigNs], window[pipelineControlsNs])
     }
 
     datgui$ = new Subject()
 
     // load pipeline control from storage
     const pipelineControlSnapshot = JSON.parse(localStorage.getItem(pipelineControlsNs))
-    Object.keys(pipelineHandlers).forEach((pipeline, i) => {
-        if (pipelineControlSnapshot && pipelineControlSnapshot[pipeline] !== undefined) {
-            window[pipelineControlsNs][pipeline] = pipelineControlSnapshot[pipeline]
+    Object.keys(pipelineHandlers).forEach((pipelineName, i) => {
+        if (pipelineControlSnapshot && pipelineControlSnapshot[pipelineName] !== undefined) {
+            window[pipelineControlsNs][pipelineName] = pipelineControlSnapshot[pipelineName]
             return
         }
 
         // only activate first pipeline
-        window[pipelineControlsNs][pipeline] = i === 0
+        window[pipelineControlsNs][pipelineName] = i === 0
     })
 
     // initialie config
@@ -102,7 +114,7 @@ export const initDatGui = (pipelineHandlers) => {
             datgui$.next({type: types.CANVAS_SIZE, payload: v.split('x')})
         })
     configFolder.add(config, 'Reset states')
-    
+
     const togglePipelineFolder = gui.addFolder(togglePipelineFolderName)
     foldersAdded[togglePipelineFolderName] = togglePipelineFolder
 
@@ -122,24 +134,26 @@ export const initDatGui = (pipelineHandlers) => {
     window.onblur = persistStates
     window.onbeforeunload = persistStates
 
-    return [datgui$, window[mainConfigNs]]
+    return datguiConfig(datgui$, window[mainConfigNs], window[pipelineControlsNs])
 }
 
 export const useGuiFolder = (folderName, params) => {
     const pipelineNs = getPipelineNs(folderName)
     defaultParams[pipelineNs] = params
 
-    const folder = gui.addFolder(folderName)
-    window[pipelineNs] = JSON.parse(localStorage.getItem(pipelineNs)) || params
+    const folder = gui.addFolder(`Pipeline: ${folderName}`)
 
     // add folder reference to `foldersAdded` cache
     foldersAdded[folderName] = folder
 
-    return {folder, guiObj: window[pipelineNs]}
+    // load gui states
+    const persistedStates = JSON.parse(localStorage.getItem(pipelineNs)) || {}
+    const guiObj = Object.assign(persistedStates, params)
+    window[pipelineNs] = guiObj
+
+    return {folder, guiObj, isActive: window[pipelineControlsNs][folderName] === true}
 }
 
 export const useGuiObj = pipelineName => {
     return window[getPipelineNs(pipelineName)]
 }
-
-export const usePipelineControls = () => window[pipelineControlsNs]

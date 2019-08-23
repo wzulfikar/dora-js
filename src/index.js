@@ -23,8 +23,8 @@ const App = () => {
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState();
 
-  const [datgui$, datguiConfig] = initDatGui(pipelineHandlers)
-  const [canvasW, canvasH] = datguiConfig['Canvas size'].split('x')
+  const datgui = initDatGui(pipelineHandlers)
+  const [canvasW, canvasH] = datgui.config['Canvas size'].split('x')
   const [canvasSize, setCanvasSize] = useState({w: canvasW, h: canvasH})
 
   useEffect(() => {
@@ -33,7 +33,7 @@ const App = () => {
       return;
     }
 
-    datgui$.subscribe({
+    datgui.$observable.subscribe({
       next: ({type, payload}) => {
         if (type === types.CANVAS_SIZE) {
           const [w, h] = payload
@@ -44,7 +44,7 @@ const App = () => {
     })
 
     const webcamPromise = webcamStreamer(videoRef.current)
-    const processFramePromise = pipelineProvider(canvasRef.current, pipelineHandlers)
+    const processFramePromise = pipelineProvider(canvasRef.current, pipelineHandlers, datgui.pipelineControls)
 
     Promise.all([
       webcamPromise,
@@ -61,6 +61,10 @@ const App = () => {
       setIsLoading(false);
     });
   }, [canvasSize]);
+
+  if (error) {
+    console.error(error)
+  }
 
   return (
     <div>
