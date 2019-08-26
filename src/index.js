@@ -10,11 +10,12 @@ import pipelineProvider from "./lib/pipelineProvider";
 
 // add your pipelines here
 const pipelineHandlers = {
-  extractTexts: require('./pipelines/extractTexts'),
-  // drawRectangle: require('./pipelines/drawRectangle'),
-  // drawEdges: require('./pipelines/drawEdges'),
-  // drawCorners: require('./pipelines/drawCorners'),
+  drawRectangle: require('./pipelines/drawRectangle'),
+  drawQr: require('./pipelines/drawQr'),
+  drawEdges: require('./pipelines/drawEdges'),
+  drawCorners: require('./pipelines/drawCorners'),
   drawPredictions: require('./pipelines/drawPredictions'),
+  extractTexts: require('./pipelines/extractTexts'),
 }
 
 const App = () => {
