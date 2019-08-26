@@ -11,6 +11,7 @@
     "dayjs": "^1.8.15",
     "edge-detection-wasm": "2.1.3",
     "fast9": "^0.0.5",
+    "handtrackjs": "^0.0.13",
     "jsqr": "^1.2.0",
     "react": "^16.9.0",
     "react-dom": "^16.9.0",

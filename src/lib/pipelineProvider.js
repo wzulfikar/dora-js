@@ -9,16 +9,14 @@ const pipelineProvider = async (canvas, pipelineHandlers, pipelineControls) => {
     const processFrame = async (canvas, image) => {
         let pipelineHasRun = false
         Object.keys(pipelineControls).map(async pipelineName => {
-            if (!pipelineControls[pipelineName]) {
+            if (!pipelineControls[pipelineName] || !canvas || !image.height) {
                 return
             }
             pipelineHasRun = true
 
             const { handler, createPayload } = pipelineHandlers[pipelineName]
             const payload = createPayload ? await createPayload(image) : undefined
-            if (canvas) {
-                handler(canvas, image, payload)
-            }
+            handler(canvas, image, payload)
         })
 
         if (!pipelineHasRun) {

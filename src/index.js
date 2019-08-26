@@ -14,6 +14,7 @@ const pipelineHandlers = {
   drawQr: require('./pipelines/drawQr'),
   drawEdges: require('./pipelines/drawEdges'),
   drawCorners: require('./pipelines/drawCorners'),
+  drawHands: require('./pipelines/drawHands'),
   drawPredictions: require('./pipelines/drawPredictions'),
   extractTexts: require('./pipelines/extractTexts'),
 }
