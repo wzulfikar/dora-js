@@ -16,9 +16,7 @@ const pipelineProvider = async (canvas, pipelineHandlers, pipelineControls) => {
 
             const { handler, createPayload } = pipelineHandlers[pipelineName]
             const payload = createPayload ? await createPayload(image) : undefined
-            if (canvas) {
-                handler(canvas, image, payload)
-            }
+            handler(canvas, image, payload)
         })
 
         if (!pipelineHasRun) {
