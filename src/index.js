@@ -15,6 +15,7 @@ const pipelineHandlers = {
   drawEdges: require('./pipelines/drawEdges'),
   drawCorners: require('./pipelines/drawCorners'),
   drawHands: require('./pipelines/drawHands'),
+  drawFaces: require('./pipelines/drawFaces'),
   drawPredictions: require('./pipelines/drawPredictions'),
   extractTexts: require('./pipelines/extractTexts'),
 }
@@ -82,7 +83,7 @@ const App = () => {
         width={canvasSize.w}
         height={canvasSize.h}
       />
-      <canvas className="size" ref={canvasRef} width={canvasSize.w} height={canvasSize.h} />
+      <canvas id="canvas" className="size" ref={canvasRef} width={canvasSize.w} height={canvasSize.h} />
     </div>
   );
 };
