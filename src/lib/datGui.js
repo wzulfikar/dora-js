@@ -152,6 +152,19 @@ export const useGuiFolder = (folderName, params) => {
     const guiObj = Object.assign(params, persistedStates)
     window[pipelineNs] = guiObj
 
+    guiObj.useRegionOption = () => {
+        // add default params for 'region' option
+        defaultParams[pipelineNs] = {
+            "Show region": false,
+            "Region style": "bracket",
+            "Region color": "#000000",
+            ...defaultParams[pipelineNs],
+        }
+        folder.add(guiObj, "Show region");
+        folder.add(guiObj, "Region style", ["bracket", "full"]);
+        folder.addColor(guiObj, "Region color");
+    }
+
     return {folder, guiObj, isActive: window[pipelineControlsNs][folderName] === true}
 }
 

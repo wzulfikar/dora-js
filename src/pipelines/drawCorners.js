@@ -22,14 +22,9 @@ export const initPipeline = async () => {
 
   const {folder, guiObj, isActive} = useGuiFolder(pipelineName, {
     'Fast Threshold': 10,
-    'Show region': false,
-    'Region style': 'bracket',
-    'Region color': '#000000',
   })
+  guiObj.useRegionOption();
   folder.add(guiObj, 'Fast Threshold', 0, 100);
-  folder.add(guiObj, 'Show region');
-  folder.add(guiObj, 'Region style', ['bracket', 'full']);
-  folder.addColor(guiObj, 'Region color');
 
   if (isActive) {
     folder.open()
