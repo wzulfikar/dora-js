@@ -1,6 +1,8 @@
 import * as dat from 'dat.gui';
 import {Subject} from 'rxjs'
 
+import drawSquareMask from '../utils/drawSquareMask'
+
 const gui = new dat.GUI();
 const defaultParams = {}
 let foldersAdded = {}
@@ -156,13 +158,15 @@ export const useGuiFolder = (folderName, params) => {
         // add default params for 'region' option
         defaultParams[pipelineNs] = {
             "Show region": false,
-            "Region style": "bracket",
+            "Region style": "Bracket",
             "Region color": "#000000",
             ...defaultParams[pipelineNs],
         }
         folder.add(guiObj, "Show region");
-        folder.add(guiObj, "Region style", ["bracket", "full"]);
+        folder.add(guiObj, "Region style", ["Bracket", "Full", "Card - vertical", "Card - horizontal"]);
         folder.addColor(guiObj, "Region color");
+
+        return (ctx, size) => drawSquareMask(ctx, size, guiObj['Region color'], guiObj['Region style']);
     }
 
     return {folder, guiObj, isActive: window[pipelineControlsNs][folderName] === true}

@@ -4,11 +4,12 @@ import "tracking";
 import "tracking/build/data/face-min";
 
 import { useGuiFolder, useGuiObj } from "../lib/datGui";
-import { drawSquareMask } from "../utils";
 
 const pipelineName = "drawFaces";
 
 let guiInitialized = false;
+let drawRegion = () => {};
+
 export const initPipeline = async () => {
   if (guiInitialized) {
     return;
@@ -17,7 +18,7 @@ export const initPipeline = async () => {
   const { folder, guiObj, isActive } = useGuiFolder(pipelineName, {
     "Fast Threshold": 10
   });
-  guiObj.useRegionOption();
+  drawRegion = guiObj.useRegionOption();
   folder.add(guiObj, "Fast Threshold", 0, 100);
 
   if (isActive) {
@@ -58,11 +59,6 @@ export const handler = (canvas, image) => {
   window.tracking.track("#canvas", tracker);
 
   if (guiObj["Show region"]) {
-    drawSquareMask(
-      ctx,
-      maskSize,
-      guiObj["Region color"],
-      guiObj["Region style"]
-    );
+    drawRegion(ctx, maskSize);
   }
 };

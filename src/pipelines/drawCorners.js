@@ -3,7 +3,6 @@ import { useGuiFolder, useGuiObj } from '../lib/datGui'
 import {
   getCenterPoint,
   getRectRegion,
-  drawSquareMask,
 } from '../utils'
 
 const {
@@ -15,6 +14,8 @@ const pipelineName = 'drawCorners'
 const CORNER_WIDTH = 3
 
 let guiInitialized = false
+let drawRegion = () => {}
+
 export const initPipeline = async () => {
   if (guiInitialized) {
     return
@@ -23,7 +24,7 @@ export const initPipeline = async () => {
   const {folder, guiObj, isActive} = useGuiFolder(pipelineName, {
     'Fast Threshold': 10,
   })
-  guiObj.useRegionOption();
+  drawRegion = guiObj.useRegionOption();
   folder.add(guiObj, 'Fast Threshold', 0, 100);
 
   if (isActive) {
@@ -52,7 +53,7 @@ export const handler = (canvas, image) => {
       gray = Image.grayscale(imageData.data, maskSize, maskSize)
       corners = Fast.findCorners(gray, maskSize, maskSize)
 
-      drawSquareMask(ctx, maskSize, guiObj['Region color'], guiObj['Region style'])
+      drawRegion(ctx, maskSize)
     } else {
       imageData = ctx.getImageData(0, 0, canvas.width, canvas.height)
       gray = Image.grayscale(imageData.data, canvas.width, canvas.height)
