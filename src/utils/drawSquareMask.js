@@ -16,14 +16,16 @@ const drawSquareMask = (ctx, size, strokeStyle, style = 'Full') => {
     }
 
     if (style === 'Card - vertical') {
-        const sizeRatio = 1.5;
-        ctx.strokeRect(centerPoint.x * sizeRatio, centerPoint.y, size / sizeRatio, size);
+        // Shift center point to right and reduce square's width by `rectRatio` percent
+        const rectRatio = 1.5;
+        ctx.strokeRect(centerPoint.x * rectRatio, centerPoint.y, size / rectRatio, size);
         return
     }
 
     if (style === 'Card - horizontal') {
-        const sizeRatio = 1.5;
-        ctx.strokeRect(centerPoint.x, centerPoint.y * sizeRatio, size, size / sizeRatio);
+        // Shift down center point and reduce square's height by `rectRatio` percent
+        const rectRatio = 1.5;
+        ctx.strokeRect(centerPoint.x, centerPoint.y * rectRatio, size, size / rectRatio);
         return
     }
 
