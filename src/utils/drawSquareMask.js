@@ -1,68 +1,90 @@
-import getCenterPoint from './getCenterPoint'
-import getRectRegion from './getRectRegion'
+import getCenterPoint from "./getCenterPoint";
+import getRectRegion from "./getRectRegion";
 
-const BRACKET_WIDTH = 25
+const BRACKET_WIDTH = 25;
+const RECT_RATIO = 1.5;
 
-const drawSquareMask = (ctx, size, strokeStyle, style = 'Full') => {
-    ctx.strokeStyle = strokeStyle;    
-    ctx.lineWidth = 1
+export const maskStyles = {
+  bracket: "Bracket",
+  cardHorizontal: "Card - horizontal",
+  cardVertical: "Card - vertical",
+  square: "Square"
+};
 
-    const centerPoint = getCenterPoint(ctx.canvas.width, ctx.canvas.height, size, size)
-    const region = getRectRegion(centerPoint.x, centerPoint.y, size, size)
+export const drawSquareMask = (ctx, size, strokeStyle, maskStyle) => {
+  ctx.strokeStyle = strokeStyle;
+  ctx.lineWidth = 1;
 
-    if (style === 'Full') {
-        ctx.strokeRect(centerPoint.x, centerPoint.y, size, size);
-        return
-    }
+  const centerPoint = getCenterPoint(
+    ctx.canvas.width,
+    ctx.canvas.height,
+    size,
+    size
+  );
+  const region = getRectRegion(centerPoint.x, centerPoint.y, size, size);
 
-    if (style === 'Card - vertical') {
-        // Shift center point to right and reduce square's width by `rectRatio` percent
-        const rectRatio = 1.5;
-        ctx.strokeRect(centerPoint.x * rectRatio, centerPoint.y, size / rectRatio, size);
-        return
-    }
+  // uncomment to display square mask overlay (eg. to debug bracket positions)
+  // ctx.strokeRect(centerPoint.x, centerPoint.y, size, size);
 
-    if (style === 'Card - horizontal') {
-        // Shift down center point and reduce square's height by `rectRatio` percent
-        const rectRatio = 1.5;
-        ctx.strokeRect(centerPoint.x, centerPoint.y * rectRatio, size, size / rectRatio);
-        return
-    }
+  switch (maskStyle) {
+    case maskStyles.square:
+      ctx.strokeRect(centerPoint.x, centerPoint.y, size, size);
+      return;
+    case maskStyles.bracket:
+      drawBracket(ctx, region, BRACKET_WIDTH);
+      return;
+    case maskStyles.cardVertical:
+      // Shift center point to right and reduce square's width by `RECT_RATIO` percent
+      ctx.strokeRect(
+        centerPoint.x * RECT_RATIO,
+        centerPoint.y,
+        size / RECT_RATIO,
+        size
+      );
+      return;
+    case maskStyles.cardHorizontal:
+      // Shift down center point and reduce square's height by `RECT_RATIO` percent
+      ctx.strokeRect(
+        centerPoint.x,
+        centerPoint.y * RECT_RATIO,
+        size,
+        size / RECT_RATIO
+      );
+      return;
+  }
+};
 
-    // uncomment to display full mask overlay (eg. to debug bracket positions)
-    // ctx.strokeRect(centerPoint.x, centerPoint.y, size, size);
+/**
+ * brackets will be drawn clockwise
+ */
+const drawBracket = (ctx, region, width) => {
+  // top-left
+  ctx.beginPath();
+  ctx.moveTo(region[0].x, region[0].y + width);
+  ctx.lineTo(region[0].x, region[0].y);
+  ctx.lineTo(region[0].x + width, region[0].y);
+  ctx.stroke();
 
-    /**
-     * brackets will be drawn clockwise
-     */
+  // top-right
+  ctx.beginPath();
+  ctx.moveTo(region[1].x - width, region[0].y);
+  ctx.lineTo(region[1].x, region[0].y);
+  ctx.lineTo(region[1].x, region[0].y + width);
+  ctx.stroke();
 
-    // top-left
-    ctx.beginPath();
-    ctx.moveTo(region[0].x, region[0].y + BRACKET_WIDTH);
-    ctx.lineTo(region[0].x, region[0].y);
-    ctx.lineTo(region[0].x + BRACKET_WIDTH, region[0].y);
-    ctx.stroke();
-  
-    // top-right
-    ctx.beginPath();
-    ctx.moveTo(region[1].x - BRACKET_WIDTH, region[0].y);
-    ctx.lineTo(region[1].x, region[0].y);
-    ctx.lineTo(region[1].x, region[0].y + BRACKET_WIDTH);
-    ctx.stroke();
+  // bottom-right
+  ctx.beginPath();
+  ctx.moveTo(region[1].x, region[1].y - width);
+  ctx.lineTo(region[1].x, region[1].y);
+  ctx.lineTo(region[1].x - width, region[1].y);
+  ctx.stroke();
 
-    // bottom-right
-    ctx.beginPath();
-    ctx.moveTo(region[1].x, region[1].y - BRACKET_WIDTH);
-    ctx.lineTo(region[1].x, region[1].y);
-    ctx.lineTo(region[1].x - BRACKET_WIDTH, region[1].y);
-    ctx.stroke();
+  // bottom-left
+  ctx.beginPath();
+  ctx.moveTo(region[0].x + width, region[1].y);
+  ctx.lineTo(region[0].x, region[1].y);
+  ctx.lineTo(region[0].x, region[1].y - width);
+  ctx.stroke();
+};
 
-    // bottom-left
-    ctx.beginPath();
-    ctx.moveTo(region[0].x + BRACKET_WIDTH, region[1].y);
-    ctx.lineTo(region[0].x, region[1].y);
-    ctx.lineTo(region[0].x, region[1].y - BRACKET_WIDTH);
-    ctx.stroke();
-}
-
-export default drawSquareMask
+export default drawSquareMask;
